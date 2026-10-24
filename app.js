@@ -652,7 +652,7 @@ function openReader(o) {
     if (marks.length) showFindbar(marks, o.q);
   }
   const saved = S.progress[o.key];
-  if (!marks.length && saved && saved.p > 0.02 && saved.p < 0.97) requestAnimationFrame(() => { window.scrollTo(0, saved.p * (document.documentElement.scrollHeight - innerHeight)); toast('Continuando donde lo dejó'); });
+  if (!o.noRestore && !marks.length && saved && saved.p > 0.02 && saved.p < 0.97) requestAnimationFrame(() => { window.scrollTo(0, saved.p * (document.documentElement.scrollHeight - innerHeight)); toast('Continuando donde lo dejó'); });
   else if (!marks.length) window.scrollTo(0, 0);
   let tm;
   const onScroll = () => {
@@ -661,7 +661,7 @@ function openReader(o) {
     clearTimeout(tm); tm = setTimeout(() => { S.progress[o.key] = { p: pct, at: Date.now() }; o.onProgress?.(pct); DB.set('progress', S.progress); }, 400);
   };
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
-  readerCleanup = () => { removeEventListener('scroll', onScroll); $('#progress').style.width = '0'; $('.findbar')?.remove(); };
+  readerCleanup = () => { removeEventListener('scroll', onScroll); $('#progress').style.width = '0'; $('.findbar')?.remove(); $('.notepop')?.remove(); };
 }
 
 async function readerView(id, params) {
@@ -698,7 +698,9 @@ async function chapterView(bid, n, params) {
     next: next && { href: `#/libro/${bid}/${n + 1}`, small: L.next, label: next.t },
     source: `${esc(bk.title)} · P. Carlos Miguel Buela, IVE`,
     share: { title: `${c.t} — ${bk.title}`, text: `${bk.title} — ${c.t} (P. Carlos M. Buela)` },
+    noRestore: !!S.scrollTo,
   });
+  if (S.scrollTo) { const id = S.scrollTo; S.scrollTo = null; setTimeout(() => { const t = document.getElementById(id); if (t) flashEl(t); }, 80); }
 }
 const BOOK_UI = { es: { prev: 'Capítulo anterior', next: 'Capítulo siguiente' }, en: { prev: 'Previous chapter', next: 'Next chapter' }, it: { prev: 'Capitolo precedente', next: 'Capitolo successivo' }, fr: { prev: 'Chapitre précédent', next: 'Chapitre suivant' }, nl: { prev: 'Vorig hoofdstuk', next: 'Volgend hoofdstuk' }, uk: { prev: 'Попередній розділ', next: 'Наступний розділ' }, ar: { prev: 'الفصل السابق', next: 'الفصل التالي' } };
 
@@ -876,6 +878,48 @@ async function firstRun() {
   }
 }
 
+/* ---------- Footnotes / in-book links ---------- */
+const NOTE_RE = /foot|note|nota|ftn|fn|endnote/i;
+function flashEl(t) { t.scrollIntoView({ block: 'center', behavior: 'smooth' }); const blk = t.closest('p,li,div,h1,h2,h3,h4') || t; blk.classList.remove('flash'); void blk.offsetWidth; blk.classList.add('flash'); }
+function notePop(html, actionHtml) {
+  $('.notepop')?.remove();
+  const d = document.createElement('div'); d.className = 'notepop'; d.setAttribute('role', 'dialog');
+  d.innerHTML = `<div class="np-body">${html}</div><div class="np-actions">${actionHtml || ''}<button class="btn" data-np="close">Cerrar</button></div>`;
+  document.body.append(d);
+  d.addEventListener('click', ev => { if (ev.target.closest('[data-np="close"]')) d.remove(); });
+  return d;
+}
+function noteHtml(el) {
+  let blk = el.closest('p,li,dd,div,aside') || el;
+  if (!blk.textContent.trim() || blk.matches('div') && blk.textContent.length > 3000) { let n = el.nextElementSibling || blk.nextElementSibling; while (n && !n.textContent.trim()) n = n.nextElementSibling; if (n) blk = n; }
+  const c = blk.cloneNode(true); c.querySelectorAll('a[href^="#"]').forEach(x => x.replaceWith(...x.childNodes));
+  return c.innerHTML;
+}
+async function openNote(id, link) {
+  const local = document.getElementById(id) || document.getElementsByName(id)[0];
+  const isRef = link.closest('sup') || NOTE_RE.test(id);
+  if (local) {
+    if (!isRef) return flashEl(local);
+    const p = notePop(noteHtml(local), '<button class="btn" data-np="go">Ir a la nota</button>');
+    p.querySelector('[data-np="go"]').onclick = () => { p.remove(); flashEl(local); };
+    return;
+  }
+  const m = /^#\/libro\/([^/]+)\/(\d+)/.exec(location.hash); if (!m) return;
+  const bk = S.books[decodeURIComponent(m[1])]; if (!bk) return;
+  const needle = `id="${id}"`;
+  for (let n = 0; n < bk.chapters.length; n++) {
+    const rec = await DB.get('chapters', chapKey(bk.id, n));
+    if (!rec || !rec.h.includes(needle)) continue;
+    const tmp = document.createElement('div'); tmp.innerHTML = rec.h;
+    const el = tmp.querySelector(`[id="${CSS.escape(id)}"]`); if (!el) continue;
+    const back = /back|ref/i.test(id);
+    const p = notePop(back ? `<p class="np-ctx">${esc(bk.chapters[n].t)}</p>` + noteHtml(el) : noteHtml(el), `<button class="btn" data-np="go">${back ? 'Volver al texto' : 'Abrir la nota'}</button>`);
+    p.querySelector('[data-np="go"]').onclick = () => { p.remove(); S.scrollTo = id; go(`#/libro/${bk.id}/${n}`); };
+    return;
+  }
+  toast('No se encontró la nota');
+}
+
 /* ---------- Router ---------- */
 function go(h) { location.hash = h; }
 async function route() {
@@ -922,8 +966,7 @@ document.addEventListener('click', e => {
     const href = a.getAttribute('href');
     if (href.startsWith('#') && !href.startsWith('#/')) {
       e.preventDefault();
-      const id = decodeURIComponent(href.slice(1)); const t = document.getElementById(id) || document.getElementsByName(id)[0];
-      if (t) { t.scrollIntoView({ block: 'center', behavior: 'smooth' }); const blk = t.closest('p,li,div') || t; blk.classList.remove('flash'); void blk.offsetWidth; blk.classList.add('flash'); }
+      if (href.length > 1) openNote(decodeURIComponent(href.slice(1)), a);
       return;
     }
     const internal = internalTarget(href);
