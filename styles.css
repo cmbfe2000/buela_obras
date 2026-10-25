@@ -270,3 +270,8 @@ footer.site{max-width:var(--maxw);margin:0 auto;padding:30px 16px 50px;color:var
 .notepop .np-body{font:17px/1.55 var(--serif)}
 .notepop .np-ctx{font:600 11px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
 .notepop .np-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.cv.mag{border-radius:4px;background:linear-gradient(180deg,#f6eedc 0%,#efe3c8 100%);color:#3a2a20;box-shadow:0 10px 24px -12px rgba(0,0,0,.45),0 2px 4px rgba(0,0,0,.1)}
+.cv.mag::before{border-color:rgba(107,29,42,.35);inset:8px;border-radius:2px}
+.cv.mag .cv-top{color:var(--cc)}
+.cv.mag .cv-title{font:600 clamp(15px,1.6vw,20px)/1.1 var(--serif);color:var(--cc);text-transform:uppercase;letter-spacing:.02em;overflow-wrap:normal;word-break:keep-all}
+.cv.mag .cv-orn{color:var(--cc)}

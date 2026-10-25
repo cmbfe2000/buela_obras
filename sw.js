@@ -1,5 +1,5 @@
 /* Service worker: app shell precache + offline images. Content lives in IndexedDB. */
-const VERSION = 'pb-v1.2.1';
+const VERSION = 'pb-v1.3.0';
 const SHELL = ['./', 'index.html', 'styles.css', 'app.js', 'vendor/minisearch.js', 'manifest.webmanifest',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png',
   'fonts/eb-garamond-latin-400-normal.woff2', 'fonts/eb-garamond-latin-400-italic.woff2',
