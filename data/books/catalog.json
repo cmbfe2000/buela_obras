@@ -6,8 +6,7 @@
   "it": "Italiano",
   "fr": "Français",
   "nl": "Nederlands",
-  "uk": "Українська",
-  "ar": "العربية"
+  "uk": "Українська"
  },
  "books": [
   {
@@ -477,54 +476,6 @@
    "words": 45170,
    "pages": 220,
    "size": 549973
-  },
-  {
-   "id": "constituciones",
-   "title": "Constituciones del Instituto del Verbo Encarnado",
-   "lang": "es",
-   "work": "constituciones",
-   "order": 39,
-   "v": "c6be5a3694",
-   "chapters": 16,
-   "words": 75626,
-   "pages": 320,
-   "size": 516946
-  },
-  {
-   "id": "constitutions",
-   "title": "Constitutions of the Institute of the Incarnate Word",
-   "lang": "en",
-   "work": "constituciones",
-   "order": 40,
-   "v": "4bc1513fcd",
-   "chapters": 16,
-   "words": 77981,
-   "pages": 326,
-   "size": 516681
-  },
-  {
-   "id": "costituzioni",
-   "title": "Costituzioni dell’Istituto del Verbo Incarnato",
-   "lang": "it",
-   "work": "constituciones",
-   "order": 41,
-   "v": "e214ab4932",
-   "chapters": 17,
-   "words": 73909,
-   "pages": 291,
-   "size": 512683
-  },
-  {
-   "id": "constituciones-ar",
-   "title": "دستور معهد الكلمة المتجسد",
-   "lang": "ar",
-   "work": "constituciones",
-   "order": 42,
-   "v": "a0bef1002e",
-   "chapters": 16,
-   "words": 76032,
-   "pages": 409,
-   "size": 735331
   }
  ]
 }
