@@ -376,7 +376,11 @@ async function cacheImages() {
 async function maybeAutoCheck() {
   if (!navigator.onLine || !S.ready) return;
   const last = S.meta.lastCheck ? Date.parse(S.meta.lastCheck) : 0;
-  if (Date.now() - last < CONFIG.checkEveryHours * 3600e3) return;
+  if (Date.now() - last < CONFIG.checkEveryHours * 3600e3) {
+    // the book catalog ships with the app: check it on every launch (cheap, same origin)
+    try { const plan = bookPlan(await fetchCatalog()); if (plan) { S.pending = { added: [], changed: [], removed: [], ...(S.pending || {}), books: plan }; updateDot(); showUpdateBanner(); } } catch { }
+    return;
+  }
   try { const p = await checkUpdates(); if (p) showUpdateBanner(); } catch { }
 }
 function pendingCount() { const p = S.pending; return p ? p.added.length + p.changed.length + p.removed.length + (p.books ? p.books.dl.length + p.books.rm.length : 0) : 0; }
@@ -510,6 +514,7 @@ function homeView() {
       <a class="feature" href="#/todos"><span class="ic">${ICON.list}</span><span><strong>Todos los escritos</strong><span>Por fecha o por título</span></span></a>
       <a class="feature" href="#/azar"><span class="ic">${ICON.dice}</span><span><strong>Un escrito al azar</strong><span>Para la lectura espiritual de hoy</span></span></a>
       <a class="feature" href="#/biblioteca"><span class="ic">${ICON.book}</span><span><strong>Biblioteca</strong><span>${realBooks().length} libros para leer sin conexión</span></span></a>
+      ${mags().length ? `<a class="feature" href="#/articulos"><span class="ic">${ICON.list}</span><span><strong>Artículos</strong><span>Ave María, Diálogo, Annuntiavit, Vox Verbi</span></span></a>` : ''}
       ${S.pages.autor ? `<a class="feature" href="#/autor"><span class="ic">${ICON.user}</span><span><strong>Sobre el autor</strong><span>Breve biografía</span></span></a>` : ''}
       <a class="feature" href="#/favoritos"><span class="ic">${ICON.star}</span><span><strong>Favoritos</strong><span>${S.favs.length} ${S.favs.length === 1 ? 'guardado' : 'guardados'}</span></span></a>
     </div></section>
