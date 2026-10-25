@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-24T22:38:27.811781+00:00",
+ "generated": "2026-10-25T07:06:59.983224+00:00",
  "langs": {
   "es": "Español",
   "en": "English",
@@ -476,6 +476,58 @@
    "words": 45170,
    "pages": 220,
    "size": 549973
+  },
+  {
+   "id": "revista-ave-maria",
+   "title": "Ave María",
+   "lang": "es",
+   "work": "revista",
+   "order": 39,
+   "kind": "revista",
+   "v": "d4b07a0fea",
+   "chapters": 92,
+   "words": 220427,
+   "pages": null,
+   "size": 1535818
+  },
+  {
+   "id": "revista-dialogo",
+   "title": "Diálogo",
+   "lang": "es",
+   "work": "revista",
+   "order": 40,
+   "kind": "revista",
+   "v": "93dfc07889",
+   "chapters": 71,
+   "words": 366591,
+   "pages": null,
+   "size": 3453197
+  },
+  {
+   "id": "revista-annuntiavit",
+   "title": "Annuntiavit",
+   "lang": "es",
+   "work": "revista",
+   "order": 41,
+   "kind": "revista",
+   "v": "b7657706e5",
+   "chapters": 77,
+   "words": 140201,
+   "pages": null,
+   "size": 998335
+  },
+  {
+   "id": "revista-vox-verbi",
+   "title": "Vox Verbi",
+   "lang": "es",
+   "work": "revista",
+   "order": 42,
+   "kind": "revista",
+   "v": "92e4f8a824",
+   "chapters": 276,
+   "words": 516409,
+   "pages": null,
+   "size": 3542419
   }
  ]
 }
