@@ -279,8 +279,8 @@ async function syncBooks(progress, from, to, plan) {
     const recs = []; const metas = [];
     for (let n = 0; n < bk.chapters.length; n++) {
       const c = bk.chapters[n]; const x = toText(c.h); const w = (x.match(WORD_RE) || []).length;
-      recs.push({ id: chapKey(entry.id, n), b: entry.id, n, t: c.t, h: c.h, x, p: c.p });
-      metas.push({ t: c.t, w, p: c.p, e: x.slice(0, 200) });
+      recs.push({ id: chapKey(entry.id, n), b: entry.id, n, t: c.t, h: c.h, x, p: c.p, d: c.d });
+      metas.push({ t: c.t, w, p: c.p, d: c.d, e: x.slice(0, 200) });
       if (n % 8 === 7) await sleep(0);
     }
     await DB.delBook(entry.id);
@@ -469,7 +469,11 @@ function row(p, extra = '') {
 function card(p, pct) {
   return `<a class="card" href="#/leer/${p.id}"><div class="meta"><span class="c">${esc(catName(p.c[0]))}</span><span>${readMins(p.w)} min</span></div><h4>${esc(p.t)}</h4><p>${esc(p.e.slice(0, 120))}…</p>${pct != null ? `<div class="bar"><i style="width:${Math.round(pct * 100)}%"></i></div>` : ''}</a>`;
 }
-const langCount = () => new Set(S.bookList.map(b => b.lang)).size;
+const isMag = b => b && b.kind === 'revista';
+const realBooks = () => S.bookList.filter(b => !isMag(b));
+const mags = () => S.bookList.filter(isMag);
+const where = c => c.d ? c.d : (c.p ? 'p. ' + c.p : '');
+const langCount = () => new Set(realBooks().map(b => b.lang)).size;
 function chapCard(id, pct) {
   const m = chapMeta(id);
   return `<a class="card" href="#/libro/${m.b}/${m.n}"><div class="meta"><span class="c">${esc(m.book.title)}</span><span>${readMins(m.w)} min</span></div><h4>${esc(m.t)}</h4><p>${esc((m.e || '').slice(0, 120))}…</p>${pct != null ? `<div class="bar"><i style="width:${Math.round(pct * 100)}%"></i></div>` : ''}</a>`;
@@ -494,17 +498,18 @@ function homeView() {
       <h1>Escritos para leer, meditar y buscar</h1>
       <p>Los escritos de padrebuela.org y sus libros, para leer y buscar sin conexión.</p>
       <form id="heroSearch"><input type="search" name="q" placeholder="Busque una palabra, un tema, una frase entre comillas…" aria-label="Buscar" enterkeyhint="search"><button>Buscar</button></form>
-      <div class="stats"><span><b>${S.posts.length}</b>escritos</span><span><b>${S.bookList.length}</b>libros</span><span><b>${((words + S.bookList.reduce((s, b) => s + b.words, 0)) / 1e6).toFixed(1)} M</b>palabras</span></div>
+      <div class="stats"><span><b>${S.posts.length}</b>escritos</span><span><b>${realBooks().length}</b>libros</span>${mags().length ? `<span><b>${mags().reduce((n, b) => n + b.chapters.filter(c => c.t !== 'Notas').length, 0)}</b>artículos</span>` : ''}<span><b>${((words + S.bookList.reduce((s, b) => s + b.words, 0)) / 1e6).toFixed(1)} M</b>palabras</span></div>
     </section>
     ${cont.length ? `<section class="section"><h2>Continuar leyendo</h2><p class="sub">Donde lo dejó.</p><div class="cards">${cont.map(([id, v]) => isChap(id) ? chapCard(id, v.p) : card(S.byId.get(+id), v.p)).join('')}</div></section>` : ''}
     <section class="section"><h2>Secciones</h2><p class="sub">Los escritos ordenados como en la página del Padre.</p>
       <div class="groups">${groups.map(g => `<div class="group"><h3>${esc(g.name)}</h3><div class="grid">${g.cats.map(c => `<a class="cat" href="#/seccion/${c.slug}"><strong>${esc(c.name)}</strong><span>${c.count} ${c.count === 1 ? 'escrito' : 'escritos'}</span></a>`).join('')}</div></div>`).join('')}</div>
     </section>
-    ${S.bookList.length ? `<section class="section"><div class="sechead"><div><h2>Libros</h2><p class="sub">${S.bookList.length} libros completos${langCount() > 1 ? ` en ${langCount()} idiomas` : ''}, también en el buscador.</p></div><a class="btn" href="#/biblioteca">Ver todos</a></div><div class="shelf">${S.bookList.filter(b => b.lang === 'es').slice(0, 12).map(b => cover(b)).join('')}</div></section>` : ''}
+    ${realBooks().length ? `<section class="section"><div class="sechead"><div><h2>Libros</h2><p class="sub">${realBooks().length} libros completos${langCount() > 1 ? ` en ${langCount()} idiomas` : ''}, también en el buscador.</p></div><a class="btn" href="#/biblioteca">Ver todos</a></div><div class="shelf">${realBooks().filter(b => b.lang === 'es').slice(0, 12).map(b => cover(b)).join('')}</div></section>` : ''}
+    ${mags().length ? `<section class="section"><div class="sechead"><div><h2>Artículos</h2><p class="sub">Sus artículos y homilías publicados en las revistas de la Familia del Verbo Encarnado, por número y fecha.</p></div><a class="btn" href="#/articulos">Ver todos</a></div><div class="shelf">${mags().map(b => cover(b)).join('')}</div></section>` : ''}
     <section class="section"><h2>Más</h2><div class="links" style="margin-top:16px">
       <a class="feature" href="#/todos"><span class="ic">${ICON.list}</span><span><strong>Todos los escritos</strong><span>Por fecha o por título</span></span></a>
       <a class="feature" href="#/azar"><span class="ic">${ICON.dice}</span><span><strong>Un escrito al azar</strong><span>Para la lectura espiritual de hoy</span></span></a>
-      <a class="feature" href="#/biblioteca"><span class="ic">${ICON.book}</span><span><strong>Biblioteca</strong><span>${S.bookList.length} libros para leer sin conexión</span></span></a>
+      <a class="feature" href="#/biblioteca"><span class="ic">${ICON.book}</span><span><strong>Biblioteca</strong><span>${realBooks().length} libros para leer sin conexión</span></span></a>
       ${S.pages.autor ? `<a class="feature" href="#/autor"><span class="ic">${ICON.user}</span><span><strong>Sobre el autor</strong><span>Breve biografía</span></span></a>` : ''}
       <a class="feature" href="#/favoritos"><span class="ic">${ICON.star}</span><span><strong>Favoritos</strong><span>${S.favs.length} ${S.favs.length === 1 ? 'guardado' : 'guardados'}</span></span></a>
     </div></section>
@@ -562,15 +567,18 @@ async function searchView(params) {
   const t0 = performance.now();
   const { results: all, phrases } = await runSearch(q);
   const ms = Math.round(performance.now() - t0);
-  const posts = all.filter(r => !isChap(r.id)), chaps = all.filter(r => isChap(r.id));
-  let results = scope === 'escritos' ? posts : scope === 'libros' ? chaps : all;
+  const posts = all.filter(r => !isChap(r.id));
+  const arts = all.filter(r => isChap(r.id) && isMag(chapMeta(r.id)?.book));
+  const chaps = all.filter(r => isChap(r.id) && !isMag(chapMeta(r.id)?.book));
+  let results = scope === 'escritos' ? posts : scope === 'libros' ? chaps : scope === 'articulos' ? arts : all;
+  if (scope === 'articulos' && book) results = results.filter(r => parseChap(r.id)?.b === book);
   if (scope === 'escritos' && cat) results = results.filter(r => S.byId.get(r.id)?.c.includes(cat));
   if (scope === 'libros' && lang) results = results.filter(r => chapMeta(r.id)?.book.lang === lang);
   if (scope === 'libros' && book) results = results.filter(r => parseChap(r.id)?.b === book);
-  const where = scope === 'escritos' ? (cat ? ` en ${esc(catName(cat))}` : ' en los escritos') : scope === 'libros' ? (book ? ` en «${esc(S.books[book]?.title || '')}»` : lang ? ` en libros en ${esc(S.langs[lang] || lang)}` : ' en los libros') : '';
+  const where = scope === 'articulos' ? (book ? ` en «${esc(S.books[book]?.title || '')}»` : ' en los artículos') : scope === 'escritos' ? (cat ? ` en ${esc(catName(cat))}` : ' en los escritos') : scope === 'libros' ? (book ? ` en «${esc(S.books[book]?.title || '')}»` : lang ? ` en libros en ${esc(S.langs[lang] || lang)}` : ' en los libros') : '';
   $('#count').innerHTML = `<b>${results.length}</b> ${results.length === 1 ? 'resultado' : 'resultados'}${where} · ${ms} ms`;
   // scope chips
-  $('#scopes').innerHTML = [['', 'Todo', all.length], ['escritos', 'Escritos', posts.length], ['libros', 'Libros', chaps.length]]
+  $('#scopes').innerHTML = [['', 'Todo', all.length], ['escritos', 'Escritos', posts.length], ['libros', 'Libros', chaps.length], ['articulos', 'Artículos', arts.length]]
     .filter(([s, , n]) => !s || n || s === scope).map(([s, label, n]) => `<a class="chip ${scope === s ? 'on' : ''}" href="${searchUrl(q, { s })}">${label} <b>${n}</b></a>`).join('');
   // secondary chips
   let sec = '';
@@ -582,6 +590,10 @@ async function searchView(params) {
     chaps.forEach(r => { const m = chapMeta(r.id); if (!m) return; lc.set(m.book.lang, (lc.get(m.book.lang) || 0) + 1); if (!lang || m.book.lang === lang) bc.set(m.b, (bc.get(m.b) || 0) + 1); });
     if (lc.size > 1) sec += [...lc.entries()].sort((a, b) => b[1] - a[1]).map(([l, n]) => `<a class="chip lang ${lang === l ? 'on' : ''}" href="${searchUrl(q, { s: scope, l: lang === l ? '' : l })}">${esc(S.langs[l] || l)} <b>${n}</b></a>`).join('');
     sec += [...bc.entries()].sort((a, b) => b[1] - a[1]).map(([id, n]) => `<a class="chip ${book === id ? 'on' : ''}" href="${searchUrl(q, { s: scope, l: lang, b: book === id ? '' : id })}">${esc(S.books[id]?.title || id)} <b>${n}</b></a>`).join('');
+  }
+  if (scope === 'articulos') {
+    const bc = new Map(); arts.forEach(r => { const b = parseChap(r.id)?.b; bc.set(b, (bc.get(b) || 0) + 1); });
+    sec = [...bc.entries()].sort((a, b) => b[1] - a[1]).map(([id, n]) => `<a class="chip ${book === id ? 'on' : ''}" href="${searchUrl(q, { s: scope, b: book === id ? '' : id })}">${esc(S.books[id]?.title || id)} <b>${n}</b></a>`).join('');
   }
   $('#filters').innerHTML = sec; $('#filters').hidden = !sec;
   searchState = { shown: 0, results, phrases, q };
@@ -597,7 +609,7 @@ async function showMore() {
     const tHits = t => phrases?.length ? phraseHits(t, phrases) : tokensMatching(t, new Set(r.terms));
     if (isChap(r.id)) {
       const m = chapMeta(r.id); if (!m) continue;
-      html.push(`<a class="row book" href="#/libro/${m.b}/${m.n}${qs}"${m.book.lang === 'ar' ? ' dir="rtl"' : ''}><h4>${markRanges(m.t, tHits(m.t))}</h4><span class="d">${m.p ? 'p. ' + m.p : ''}</span><p lang="${m.book.lang}">${snippet(body.x, r.terms, phrases)}</p><div class="tags"><span class="bk">${ICON.book} ${esc(m.book.title)}</span>${m.book.lang !== 'es' ? `<span class="lg">${esc(m.book.lang.toUpperCase())}</span>` : ''}</div></a>`);
+      html.push(`<a class="row book" href="#/libro/${m.b}/${m.n}${qs}"${m.book.lang === 'ar' ? ' dir="rtl"' : ''}><h4>${markRanges(m.t, tHits(m.t))}</h4><span class="d">${esc(where(m))}</span><p lang="${m.book.lang}">${snippet(body.x, r.terms, phrases)}</p><div class="tags"><span class="bk">${ICON.book} ${esc(m.book.title)}</span>${m.book.lang !== 'es' ? `<span class="lg">${esc(m.book.lang.toUpperCase())}</span>` : ''}</div></a>`);
     } else {
       const p = S.byId.get(r.id); if (!p) continue;
       html.push(`<a class="row" href="#/leer/${p.id}${qs}"><h4>${markRanges(p.t, tHits(p.t))}</h4><span class="d">${fmtShort(p.d)}</span><p>${snippet(body.x, r.terms, phrases)}</p><div class="tags">${p.c.map(c => `<span>${esc(catName(c))}</span>`).join('')}</div></a>`);
@@ -692,10 +704,10 @@ async function chapterView(bid, n, params) {
   openReader({
     key: chapKey(bid, n), title: c.t.split(' · ').pop(), kicker: c.t.split(' · ').slice(0, -1).join(' · '), html: rec.h, q: params.get('q') || '', book: true,
     dir: bk.lang === 'ar' ? 'rtl' : '', lang: bk.lang, tocHref: `#/libro/${bid}`,
-    crumbs: `<a href="#/">Inicio</a> › <a href="#/biblioteca">Libros</a> › <a href="#/libro/${bid}">${esc(bk.title)}</a>`,
-    metaHtml: `<span>${esc(bk.title)}</span><span>·</span><span>${n + 1} / ${bk.chapters.length}</span>${c.p ? `<span>·</span><span>p. ${c.p}</span>` : ''}<span>·</span><span>${readMins(c.w)} min</span>`,
-    prev: prev && { href: `#/libro/${bid}/${n - 1}`, small: L.prev, label: prev.t },
-    next: next && { href: `#/libro/${bid}/${n + 1}`, small: L.next, label: next.t },
+    crumbs: `<a href="#/">Inicio</a> › ${isMag(bk) ? '<a href="#/articulos">Artículos</a>' : '<a href="#/biblioteca">Libros</a>'} › <a href="#/libro/${bid}">${esc(bk.title)}</a>`,
+    metaHtml: `<span>${esc(bk.title)}</span>${c.d ? `<span>·</span><span>${esc(c.d)}</span>` : ''}<span>·</span><span>${n + 1} / ${bk.chapters.length}</span>${c.p ? `<span>·</span><span>p. ${c.p}</span>` : ''}<span>·</span><span>${readMins(c.w)} min</span>`,
+    prev: prev && { href: `#/libro/${bid}/${n - 1}`, small: isMag(bk) ? 'Artículo anterior' : L.prev, label: prev.t.split(' · ').pop() },
+    next: next && { href: `#/libro/${bid}/${n + 1}`, small: isMag(bk) ? 'Artículo siguiente' : L.next, label: next.t.split(' · ').pop() },
     source: `${esc(bk.title)} · P. Carlos Miguel Buela, IVE`,
     share: { title: `${c.t} — ${bk.title}`, text: `${bk.title} — ${c.t} (P. Carlos M. Buela)` },
     noRestore: !!S.scrollTo,
@@ -709,20 +721,27 @@ const COVER_COLORS = ['#6b1d2a', '#1f3a5f', '#2f4f3a', '#4b2a5c', '#7a4b1c', '#3
 function coverColor(work) { let h = 0; for (const ch of work || '') h = (h * 31 + ch.charCodeAt(0)) >>> 0; return COVER_COLORS[h % COVER_COLORS.length]; }
 function cover(bk, size = '') {
   const pr = S.progress['book:' + bk.id];
-  return `<a class="cover ${size}" href="#/libro/${bk.id}" style="--cc:${coverColor(bk.work)}" ${bk.lang === 'ar' ? 'dir="rtl"' : ''}>
-    <span class="cv"><span class="cv-top">P. Carlos Miguel Buela</span><span class="cv-title" lang="${bk.lang}">${esc(bk.title)}</span><span class="cv-orn">✠</span>${bk.lang !== 'es' ? `<span class="cv-lang">${esc(bk.lang.toUpperCase())}</span>` : ''}</span>
-    <span class="cap"><b>${esc(bk.title)}</b><small>${bk.chapters.length} cap. · ${Math.round(bk.words / 1000)} mil palabras${pr ? ' · leyendo' : ''}</small></span></a>`;
+  return `<a class="cover ${size}" href="#/libro/${bk.id}" style="--cc:${coverColor(isMag(bk) ? bk.id : bk.work)}" ${bk.lang === 'ar' ? 'dir="rtl"' : ''}>
+    <span class="cv${isMag(bk) ? ' mag' : ''}"><span class="cv-top">${isMag(bk) ? 'Revista · P. Carlos M. Buela' : 'P. Carlos Miguel Buela'}</span><span class="cv-title" lang="${bk.lang}">${esc(bk.title)}</span><span class="cv-orn">✠</span>${bk.lang !== 'es' ? `<span class="cv-lang">${esc(bk.lang.toUpperCase())}</span>` : ''}</span>
+    <span class="cap"><b>${esc(bk.title)}</b><small>${isMag(bk) ? `${bk.chapters.filter(c => c.t !== 'Notas').length} artículos` : `${bk.chapters.length} cap.`} · ${Math.round(bk.words / 1000)} mil palabras${pr ? ' · leyendo' : ''}</small></span></a>`;
+}
+function articlesView() {
+  setTitle('Artículos');
+  view().innerHTML = `<div class="wrap"><div class="crumbs"><a href="#/">Inicio</a></div>
+    <div class="pagehead"><div><h1>Artículos</h1><p class="sub">Artículos, homilías y crónicas del P. Buela en las revistas de la Familia del Verbo Encarnado</p></div></div>
+    <div class="shelf">${mags().map(b => cover(b)).join('')}</div></div>`;
 }
 function libraryView(params) {
   setTitle('Libros');
   const lang = params.get('l') || '';
-  const counts = {}; S.bookList.forEach(b => counts[b.lang] = (counts[b.lang] || 0) + 1);
-  const list = S.bookList.filter(b => !lang || b.lang === lang);
+  const counts = {}; realBooks().forEach(b => counts[b.lang] = (counts[b.lang] || 0) + 1);
+  const list = realBooks().filter(b => !lang || b.lang === lang);
   const groups = lang ? [[lang, list]] : Object.keys(counts).map(l => [l, list.filter(b => b.lang === l)]);
   view().innerHTML = `<div class="wrap"><div class="crumbs"><a href="#/">Inicio</a></div>
-    <div class="pagehead"><div><h1>Libros</h1><p class="sub">${S.bookList.length} libros del P. Buela${Object.keys(counts).length > 1 ? ` en ${Object.keys(counts).length} idiomas` : ''} · disponibles sin conexión y en el buscador</p></div></div>
-    ${Object.keys(counts).length > 1 ? `<div class="chips" style="margin-bottom:24px"><a class="chip ${!lang ? 'on' : ''}" href="#/biblioteca">Todos <b>${S.bookList.length}</b></a>${Object.entries(counts).map(([l, n]) => `<a class="chip ${lang === l ? 'on' : ''}" href="#/biblioteca?l=${l}">${esc(S.langs[l] || l)} <b>${n}</b></a>`).join('')}</div>` : ''}
-    ${S.bookList.length ? groups.map(([l, bks]) => `<section class="group" style="margin-bottom:34px"><h3>${esc(S.langs[l] || l)}</h3><div class="shelf">${bks.map(b => cover(b)).join('')}</div></section>`).join('') : `<div class="empty"><h3>No hay libros descargados</h3><p>Elija los idiomas en <a href="#/ajustes">Ajustes</a> y pulse «Buscar actualizaciones».</p></div>`}
+    <div class="pagehead"><div><h1>Libros</h1><p class="sub">${realBooks().length} libros del P. Buela${Object.keys(counts).length > 1 ? ` en ${Object.keys(counts).length} idiomas` : ''} · disponibles sin conexión y en el buscador</p></div></div>
+    ${Object.keys(counts).length > 1 ? `<div class="chips" style="margin-bottom:24px"><a class="chip ${!lang ? 'on' : ''}" href="#/biblioteca">Todos <b>${realBooks().length}</b></a>${Object.entries(counts).map(([l, n]) => `<a class="chip ${lang === l ? 'on' : ''}" href="#/biblioteca?l=${l}">${esc(S.langs[l] || l)} <b>${n}</b></a>`).join('')}</div>` : ''}
+    ${mags().length ? `<p class="hint" style="margin:-8px 0 22px">Los artículos de revistas están en <a href="#/articulos">Artículos</a>.</p>` : ''}
+    ${realBooks().length ? groups.map(([l, bks]) => `<section class="group" style="margin-bottom:34px"><h3>${esc(S.langs[l] || l)}</h3><div class="shelf">${bks.map(b => cover(b)).join('')}</div></section>`).join('') : `<div class="empty"><h3>No hay libros descargados</h3><p>Elija los idiomas en <a href="#/ajustes">Ajustes</a> y pulse «Buscar actualizaciones».</p></div>`}
     ${S.pages.libros ? `<p class="hint" style="margin-top:20px">También: <a href="#/descargas">enlaces de descarga de la página padrebuela.org</a> (PDF, epub).</p>` : ''}
   </div>`;
 }
@@ -730,21 +749,21 @@ function bookView(bid) {
   const bk = S.books[bid]; if (!bk) return notFound();
   setTitle(bk.title);
   const pr = S.progress['book:' + bid];
-  const others = S.bookList.filter(b => b.work === bk.work && b.id !== bk.id);
+  const others = isMag(bk) ? [] : S.bookList.filter(b => b.work === bk.work && b.id !== bk.id);
   const rtl = bk.lang === 'ar';
-  view().innerHTML = `<div class="wrap bookpage"><div class="crumbs"><a href="#/">Inicio</a> › <a href="#/biblioteca">Libros</a></div>
+  view().innerHTML = `<div class="wrap bookpage"><div class="crumbs"><a href="#/">Inicio</a> › ${isMag(bk) ? '<a href="#/articulos">Artículos</a>' : '<a href="#/biblioteca">Libros</a>'}</div>
     <div class="bookhead">${cover(bk, 'big')}
       <div class="bookinfo"${rtl ? ' dir="rtl"' : ''}><p class="eyebrow">P. Carlos Miguel Buela, IVE</p><h1 lang="${bk.lang}">${esc(bk.title)}</h1>
-        <p class="sub">${esc(S.langs[bk.lang] || bk.lang)} · ${bk.chapters.length} capítulos · ${Math.round(bk.words / 1000)} mil palabras${bk.pages ? ` · ${bk.pages} págs.` : ''}</p>
+        <p class="sub">${isMag(bk) ? `Revista · ${bk.chapters.filter(c => c.t !== 'Notas').length} artículos` : `${esc(S.langs[bk.lang] || bk.lang)} · ${bk.chapters.length} capítulos`} · ${Math.round(bk.words / 1000)} mil palabras${bk.pages ? ` · ${bk.pages} págs.` : ''}</p>
         <div class="actions" style="margin:18px 0">${pr ? `<a class="btn primary" href="#/libro/${bid}/${pr.n}">Continuar: ${esc(bk.chapters[pr.n]?.t.slice(0, 40) || '')}</a><a class="btn" href="#/libro/${bid}/0">Desde el principio</a>` : `<a class="btn primary" href="#/libro/${bid}/0">Comenzar a leer</a>`}
 </div>
-        <form class="booksearch" id="bookSearch"><input type="search" name="q" placeholder="Buscar en este libro…" aria-label="Buscar en este libro" enterkeyhint="search"></form>
+        <form class="booksearch" id="bookSearch"><input type="search" name="q" placeholder="${isMag(bk) ? 'Buscar en esta revista…' : 'Buscar en este libro…'}" aria-label="Buscar" enterkeyhint="search"></form>
         ${others.length ? `<p class="sub">Otras ediciones: ${others.map(o => `<a href="#/libro/${o.id}">${esc(S.langs[o.lang] || o.lang)}</a>`).join(' · ')}</p>` : ''}
       </div></div>
-    <h2 class="tochead">Índice</h2>
-    <ol class="toc"${rtl ? ' dir="rtl"' : ''}>${bk.chapters.map((c, n) => { const p = S.progress[chapKey(bid, n)]; return `<li><a href="#/libro/${bid}/${n}"><span class="tn">${n + 1}</span><span class="tt">${esc(c.t)}</span><span class="tm">${c.p ? 'p. ' + c.p + ' · ' : ''}${readMins(c.w)} min${p && p.p > 0.9 ? ' ✓' : ''}</span></a></li>`; }).join('')}</ol>
+    <h2 class="tochead">${isMag(bk) ? 'Artículos' : 'Índice'}</h2>
+    <ol class="toc"${rtl ? ' dir="rtl"' : ''}>${bk.chapters.map((c, n) => { const p = S.progress[chapKey(bid, n)]; return `<li><a href="#/libro/${bid}/${n}"><span class="tn">${n + 1}</span><span class="tt">${esc(c.t)}</span><span class="tm">${where(c) ? esc(where(c)) + ' · ' : ''}${readMins(c.w)} min${p && p.p > 0.9 ? ' ✓' : ''}</span></a></li>`; }).join('')}</ol>
   </div>`;
-  $('#bookSearch').onsubmit = e => { e.preventDefault(); const q = e.target.q.value.trim(); if (q) go(searchUrl(q, { s: 'libros', b: bid })); };
+  $('#bookSearch').onsubmit = e => { e.preventDefault(); const q = e.target.q.value.trim(); if (q) go(searchUrl(q, { s: isMag(bk) ? 'articulos' : 'libros', b: bid })); };
 }
 
 function highlightIn(root, termSet, phrases) {
@@ -797,7 +816,7 @@ function favView() {
   const chaps = S.favs.filter(isChap).map(chapMeta).filter(Boolean);
   view().innerHTML = `<div class="wrap"><div class="crumbs"><a href="#/">Inicio</a></div><div class="pagehead"><div><h1>Favoritos</h1><p class="sub">${posts.length + chaps.length} guardados</p></div></div>
     ${!posts.length && !chaps.length ? `<div class="empty"><h3>Aún no hay favoritos</h3><p>Toque el marcador en cualquier escrito o capítulo para guardarlo aquí.</p></div>` : ''}
-    ${chaps.length ? `<h3 class="tochead">Capítulos de libros</h3><div class="list">${chaps.map(m => `<a class="row book" href="#/libro/${m.b}/${m.n}"><h4>${esc(m.t)}</h4><span class="d">${m.p ? 'p. ' + m.p : ''}</span><p>${esc((m.e || '').slice(0, 200))}…</p><div class="tags"><span class="bk">${ICON.book} ${esc(m.book.title)}</span></div></a>`).join('')}</div>` : ''}
+    ${chaps.length ? `<h3 class="tochead">Capítulos de libros</h3><div class="list">${chaps.map(m => `<a class="row book" href="#/libro/${m.b}/${m.n}"><h4>${esc(m.t)}</h4><span class="d">${esc(where(m))}</span><p>${esc((m.e || '').slice(0, 200))}…</p><div class="tags"><span class="bk">${ICON.book} ${esc(m.book.title)}</span></div></a>`).join('')}</div>` : ''}
     ${posts.length ? `<h3 class="tochead">Escritos</h3><div class="list">${posts.map(p => row(p)).join('')}</div>` : ''}</div>`;
 }
 async function toggleFav(id) { S.favs = S.favs.includes(id) ? S.favs.filter(x => x !== id) : [id, ...S.favs]; await DB.set('favs', S.favs); }
@@ -939,6 +958,7 @@ async function route() {
     case 'autor': staticPage('autor', 'Sobre el autor'); break;
     case 'descargas': staticPage('libros', 'Enlaces de descarga', 'Página «Libros» de padrebuela.org. Los enlaces llevan a sitios externos y necesitan conexión a internet.'); break;
     case 'libros': case 'biblioteca': libraryView(params); break;
+    case 'articulos': articlesView(); break;
     case 'libro': if (seg[2] != null) await chapterView(decodeURIComponent(seg[1]), +seg[2], params); else bookView(decodeURIComponent(seg[1])); break;
     case 'ajustes': await settingsView(); break;
     case 'azar': { const p = S.posts[Math.floor(Math.random() * S.posts.length)]; history.replaceState(null, '', `#/leer/${p.id}`); await readerView(p.id, new URLSearchParams()); break; }
