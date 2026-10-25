@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-25T07:06:59.983224+00:00",
+ "generated": "2026-10-25T07:14:25.836054+00:00",
  "langs": {
   "es": "Español",
   "en": "English",
@@ -27,11 +27,11 @@
    "lang": "es",
    "work": "sacerdotes",
    "order": 1,
-   "v": "6747979df3",
+   "v": "db30c261d8",
    "chapters": 101,
    "words": 225553,
    "pages": null,
-   "size": 1720236
+   "size": 1720238
   },
   {
    "id": "pan-de-vida-eterna",
@@ -99,7 +99,7 @@
    "lang": "es",
    "work": "mi-parroquia",
    "order": 7,
-   "v": "a602ed830a",
+   "v": "28b078505a",
    "chapters": 34,
    "words": 193937,
    "pages": null,
@@ -243,7 +243,7 @@
    "lang": "es",
    "work": "lujan",
    "order": 19,
-   "v": "7a08be79bf",
+   "v": "9d0b3232e8",
    "chapters": 15,
    "words": 52068,
    "pages": null,
@@ -255,11 +255,11 @@
    "lang": "es",
    "work": "juan-pablo",
    "order": 20,
-   "v": "fc23555c87",
+   "v": "462cef1a24",
    "chapters": 45,
    "words": 189793,
    "pages": null,
-   "size": 1459477
+   "size": 1459478
   },
   {
    "id": "padre-julio-meinvielle",
@@ -267,7 +267,7 @@
    "lang": "es",
    "work": "meinvielle",
    "order": 21,
-   "v": "63d9493d0e",
+   "v": "81b6ff2482",
    "chapters": 14,
    "words": 35418,
    "pages": null,
@@ -279,11 +279,11 @@
    "lang": "es",
    "work": "senor-pastor",
    "order": 22,
-   "v": "96eebb7e38",
+   "v": "7976155599",
    "chapters": 54,
    "words": 272720,
    "pages": null,
-   "size": 1968999
+   "size": 1969002
   },
   {
    "id": "ejercicios-nueva-evangelizacion",
@@ -327,11 +327,11 @@
    "lang": "es",
    "work": "pasion",
    "order": 26,
-   "v": "85e73a68bb",
+   "v": "f6ef94813a",
    "chapters": 5,
    "words": 17991,
    "pages": 87,
-   "size": 115956
+   "size": 115958
   },
   {
    "id": "lugar-bautismo-jesus",
@@ -351,7 +351,7 @@
    "lang": "es",
    "work": "san-pedro",
    "order": 28,
-   "v": "1ee6248e97",
+   "v": "c9d73af659",
    "chapters": 6,
    "words": 14354,
    "pages": 60,
@@ -363,7 +363,7 @@
    "lang": "es",
    "work": "dominus-iesus",
    "order": 29,
-   "v": "bed0e2da3a",
+   "v": "515f337022",
    "chapters": 10,
    "words": 35304,
    "pages": null,
@@ -387,11 +387,11 @@
    "lang": "es",
    "work": "chapi",
    "order": 31,
-   "v": "ef802c33c0",
+   "v": "56a84b2ec5",
    "chapters": 9,
    "words": 13280,
    "pages": 38,
-   "size": 84976
+   "size": 84977
   },
   {
    "id": "carlos-de-foucauld",
@@ -411,7 +411,7 @@
    "lang": "es",
    "work": "servidoras",
    "order": 33,
-   "v": "74adf0fa46",
+   "v": "812d6d604a",
    "chapters": 17,
    "words": 93829,
    "pages": null,
@@ -423,11 +423,11 @@
    "lang": "es",
    "work": "servidoras",
    "order": 34,
-   "v": "e5f9924140",
+   "v": "e8acb8dbd0",
    "chapters": 59,
    "words": 148702,
    "pages": null,
-   "size": 1336832
+   "size": 1336833
   },
   {
    "id": "las-servidoras-3",
@@ -459,11 +459,11 @@
    "lang": "es",
    "work": "servidoras",
    "order": 37,
-   "v": "cbf601348a",
+   "v": "c3af7931c1",
    "chapters": 17,
    "words": 100285,
    "pages": null,
-   "size": 850452
+   "size": 850453
   },
   {
    "id": "sluzhebnytsi",
@@ -484,11 +484,11 @@
    "work": "revista",
    "order": 39,
    "kind": "revista",
-   "v": "d4b07a0fea",
+   "v": "e3df1bb585",
    "chapters": 92,
    "words": 220427,
    "pages": null,
-   "size": 1535818
+   "size": 1535819
   },
   {
    "id": "revista-dialogo",
@@ -497,11 +497,11 @@
    "work": "revista",
    "order": 40,
    "kind": "revista",
-   "v": "93dfc07889",
+   "v": "e2c19f8de9",
    "chapters": 71,
    "words": 366591,
    "pages": null,
-   "size": 3453197
+   "size": 3453203
   },
   {
    "id": "revista-annuntiavit",
@@ -510,11 +510,11 @@
    "work": "revista",
    "order": 41,
    "kind": "revista",
-   "v": "b7657706e5",
+   "v": "a285168e65",
    "chapters": 77,
    "words": 140201,
    "pages": null,
-   "size": 998335
+   "size": 998337
   },
   {
    "id": "revista-vox-verbi",
@@ -523,11 +523,11 @@
    "work": "revista",
    "order": 42,
    "kind": "revista",
-   "v": "92e4f8a824",
+   "v": "bf8c03f5a5",
    "chapters": 276,
    "words": 516409,
    "pages": null,
-   "size": 3542419
+   "size": 3542420
   }
  ]
 }
