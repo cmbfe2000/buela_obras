@@ -275,3 +275,11 @@ footer.site{max-width:var(--maxw);margin:0 auto;padding:30px 16px 50px;color:var
 .cv.mag .cv-top{color:var(--cc)}
 .cv.mag .cv-title{font:600 clamp(15px,1.6vw,20px)/1.1 var(--serif);color:var(--cc);text-transform:uppercase;letter-spacing:.02em;overflow-wrap:normal;word-break:keep-all}
 .cv.mag .cv-orn{color:var(--cc)}
+.backbar{position:sticky;top:64px;z-index:25;height:44px;margin:0 -8px 6px;pointer-events:none}
+.backres{pointer-events:auto;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px 0 8px;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font:600 13px var(--sans);box-shadow:0 6px 18px -8px rgba(0,0,0,.45);max-width:calc(100vw - 32px)}
+.backres svg{width:18px;height:18px;stroke-width:2.2;flex:none}
+.backres span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.backres em{font-style:normal;opacity:.85;font-weight:500}
+:root[data-theme="dark"] .backres{color:#1a1012}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]):not([data-theme="sepia"]) .backres{color:#1a1012}}
+@media (max-width:640px){.backbar{top:62px}}
