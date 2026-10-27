@@ -615,7 +615,7 @@ function homeView() {
   </div>${footer()}`;
   $('#heroSearch').onsubmit = e => { e.preventDefault(); const q = e.target.q.value.trim(); if (q) go(`#/buscar?q=${encodeURIComponent(q)}`); };
 }
-const footer = () => `<footer class="site">Textos de <a href="${CONFIG.site}" target="_blank" rel="noopener">padrebuela.org</a>${S.meta.lastSync ? ` · Actualizado el ${fmtDate(S.meta.lastSync)}` : ''}</footer>`;
+const footer = () => `<footer class="site">Textos recopilados de diversas fuentes, propiedad de sus respectivos autores${S.meta.lastSync ? ` · Actualizado el ${fmtDate(S.meta.lastSync)}` : ''}</footer>`;
 
 function listView(title, sub, posts, crumbs, opts = {}) {
   let sort = opts.sort || 'new';
@@ -936,7 +936,7 @@ async function settingsView() {
   const theme = ls.get('theme', 'auto'); const size = ls.get('size', 21);
   view().innerHTML = `<div class="wrap" style="max-width:760px"><div class="crumbs"><a href="#/">Inicio</a></div><div class="pagehead"><div><h1>Ajustes</h1><p class="sub">Contenido sin conexión, actualizaciones y lectura.</p></div></div>
     ${swWaiting ? `<div class="panel"><h2>Nueva versión de la aplicación</h2><p>Hay una versión mejorada de la app lista para usar.</p><button class="btn primary" id="swReload">Recargar ahora</button></div>` : ''}
-    <div class="panel"><h2>Contenido</h2><p>Todos los textos están guardados en este dispositivo: puede leer y buscar sin conexión. Los escritos se actualizan desde padrebuela.org; los libros, desde esta aplicación.</p>
+    <div class="panel"><h2>Contenido</h2><p>Todos los textos están guardados en este dispositivo: puede leer y buscar sin conexión.</p>
       <dl class="kv"><dt>Escritos</dt><dd>${S.posts.length}</dd><dt>Libros</dt><dd>${S.bookList.length}</dd><dt>Última actualización</dt><dd>${S.meta.lastSync ? fmtDate(S.meta.lastSync) : '—'}</dd><dt>Última comprobación</dt><dd>${S.meta.lastCheck ? new Date(S.meta.lastCheck).toLocaleString('es') : '—'}</dd><dt>Espacio usado</dt><dd>${est || '—'}${persisted ? ' · protegido' : ''}</dd></dl>
       <div id="updStatus" class="mstat" style="margin-bottom:12px">${pendingCount() ? `Cambios disponibles: ${pendingText()}.` : ''}</div>
       <div class="meter" id="meter" hidden><i></i></div>
@@ -952,7 +952,7 @@ async function settingsView() {
       <p class="prose" style="margin-top:16px;font-size:var(--reader-size)">«Hay que comenzar siempre de nuevo.» Muestra del tamaño de letra.</p>
     </div>
     <div class="panel"><h2>Instalar</h2><p>En iPhone/iPad: Compartir → «Añadir a pantalla de inicio». En Android/Chrome o en el ordenador: menú → «Instalar aplicación».</p>${deferredInstall ? '<button class="btn primary" id="btnInstall">Instalar ahora</button>' : ''}</div>
-    <div class="panel"><h2>Acerca de</h2><p>Los textos proceden de <a href="${CONFIG.site}" target="_blank" rel="noopener">padrebuela.org</a> y pertenecen a sus autores. Esta app los guarda en el dispositivo para leerlos y buscarlos sin conexión.</p></div>
+    <div class="panel"><h2>Acerca de</h2><p>Los textos recopilados en esta app proceden de diversas fuentes y pertenecen a sus respectivos autores. La app los guarda en el dispositivo para que pueda leerlos y buscarlos sin conexión.</p></div>
   </div>`;
   const meter = $('#meter'), bar = meter.querySelector('i'), st = $('#updStatus');
   const prog = (f, msg) => { meter.hidden = false; bar.style.width = (f * 100) + '%'; st.textContent = msg; };
