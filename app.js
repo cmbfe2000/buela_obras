@@ -556,6 +556,8 @@ function searchUrl(q, o = {}) {
   return '#/buscar?' + p.toString();
 }
 async function searchView(params) {
+  const restore = S.lastSearch === location.hash && S.searchSaved ? S.searchSaved : null;
+  S.lastSearch = location.hash; S.searchSaved = null;
   const q = params.get('q') || ''; const scope = params.get('s') || ''; const cat = +params.get('c') || 0; const lang = params.get('l') || ''; const book = params.get('b') || '';
   $('#q').value = q; setTitle(q ? `«${q}»` : 'Buscar');
   view().innerHTML = `<div class="wrap"><div class="searchhead">
@@ -604,6 +606,11 @@ async function searchView(params) {
   searchState = { shown: 0, results, phrases, q };
   $('#list').innerHTML = results.length ? '' : `<div class="empty"><h3>Sin resultados</h3><p>Pruebe con menos palabras o con otra forma de la palabra.</p></div>`;
   await showMore();
+  if (restore) {
+    while (searchState.shown < Math.min(restore.shown, results.length)) await showMore();
+    S.skipTop = true;
+    requestAnimationFrame(() => window.scrollTo(0, restore.y));
+  }
 }
 async function showMore() {
   const st = searchState; const { results, phrases, q } = st; const from = st.shown, to = Math.min(results.length, from + 20);
@@ -630,7 +637,9 @@ async function showMore() {
 let readerCleanup = null;
 function openReader(o) {
   const isFav = S.favs.includes(o.key);
+  const backHref = o.q ? (S.lastSearch && new URLSearchParams(S.lastSearch.split('?')[1] || '').get('q') === o.q ? S.lastSearch : searchUrl(o.q)) : '';
   view().innerHTML = `<article class="reader">
+    ${backHref ? `<div class="backbar"><a class="backres" href="${esc(backHref)}" title="Volver a los resultados de la búsqueda"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg><span>Resultados <em>«${esc(o.q.length > 28 ? o.q.slice(0, 27) + '…' : o.q)}»</em></span></a></div>` : ''}
     <div class="crumbs">${o.crumbs}</div>
     <header${o.dir ? ` dir="${o.dir}"` : ''}>${o.kicker ? `<p class="kicker">${esc(o.kicker)}</p>` : ''}<h1>${esc(o.title)}</h1><div class="meta">${o.metaHtml}</div></header>
     <div class="tools">
@@ -969,7 +978,8 @@ async function route() {
     case 'azar': { const p = S.posts[Math.floor(Math.random() * S.posts.length)]; history.replaceState(null, '', `#/leer/${p.id}`); await readerView(p.id, new URLSearchParams()); break; }
     default: notFound();
   }
-  if (seg[0] !== 'leer' && seg[0] !== 'azar' && !(seg[0] === 'libro' && seg[2] != null)) window.scrollTo(0, 0);
+  if (S.skipTop) S.skipTop = false;
+  else if (seg[0] !== 'leer' && seg[0] !== 'azar' && !(seg[0] === 'libro' && seg[2] != null)) window.scrollTo(0, 0);
 }
 
 /* ---------- Prefs, events, SW ---------- */
@@ -982,6 +992,7 @@ let swWaiting = null, deferredInstall = null;
 addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; });
 
 document.addEventListener('click', e => {
+  if (e.target.closest('#list a.row') && location.hash.startsWith('#/buscar')) S.searchSaved = { y: scrollY, shown: searchState.shown };
   const b = e.target.closest('[data-act]');
   if (b?.dataset.act === 'dismiss') { banner(null); return; }
   if (b?.dataset.act === 'update') { banner(null); go('#/ajustes'); setTimeout(() => $('#btnCheck')?.click(), 50); return; }
