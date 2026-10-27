@@ -124,7 +124,101 @@ function cleanHtml(html) {
   });
   body.querySelectorAll('span,font,center,b:empty,i:empty,strong:empty,em:empty,u').forEach(el => el.replaceWith(...el.childNodes));
   body.querySelectorAll('p,div,h1,h2,h3,h4,h5,h6').forEach(el => { if (!el.textContent.replace(/[\s ]/g, '') && !el.querySelector('img,a[id]')) el.remove(); });
+  try { unifyNotes(body); } catch (e) { console.warn('notes', e); }
   return body.innerHTML.replace(/\n{2,}/g, '\n').trim();
+}
+/* Footnotes: same unified format as the books (see books/footnotes.py) */
+function unifyNotes(body, prefix = 'p') {
+  const BLK = 'p,li,div,blockquote,dd,td';
+  const frag = a => { const h = a.getAttribute('href') || ''; const i = h.indexOf('#'); return i >= 0 ? h.slice(i + 1) : null; };
+  const anchors = [...body.querySelectorAll('a[href*="#"]')].filter(a => frag(a));
+  if (!anchors.length) return false;
+  const byFrag = new Map(); anchors.forEach(a => { const f = frag(a); if (!byFrag.has(f)) byFrag.set(f, []); byFrag.get(f).push(a); });
+  const idsOf = a => {
+    const s = new Set([a.id]); const p = a.parentElement;
+    if (p && p.tagName === 'SUP' && p.id) s.add(p.id);
+    const pr = a.previousElementSibling; if (pr && pr.tagName === 'A' && !pr.textContent.trim() && pr.id) s.add(pr.id);
+    s.delete(''); return s;
+  };
+  const blockOf = a => { const b = a.parentElement && a.parentElement.closest(BLK); return b && body.contains(b) && b !== body ? b : null; };
+  const textBefore = (a, blk) => { let out = ''; const w = document.createTreeWalker(blk, NodeFilter.SHOW_TEXT); while (w.nextNode()) { const n = w.currentNode; if (a.contains(n) || (a.compareDocumentPosition(n) & Node.DOCUMENT_POSITION_FOLLOWING)) break; out += n.nodeValue; } return out; };
+  const opens = (a, blk) => textBefore(a, blk).replace(/[\s\[\]()]/g, '').length <= 2;
+  const order = new Map(); [...body.querySelectorAll('*')].forEach((e, i) => order.set(e, i));
+  const used = new Set(); const pairs = [];
+  for (const a of anchors) {
+    if (used.has(a)) continue;
+    const cands = [...idsOf(a)].flatMap(i => byFrag.get(i) || []).filter(b => b !== a && !used.has(b));
+    if (!cands.length) continue;
+    const oa = order.get(a);
+    cands.sort((x, y) => ((order.get(x) < oa) - (order.get(y) < oa)) || (Math.abs(order.get(x) - oa) - Math.abs(order.get(y) - oa)));
+    const b = cands[0]; const bb = blockOf(b); const ab = blockOf(a);
+    if (!bb) continue;
+    if (!opens(b, bb) && ab && opens(a, ab)) continue;
+    pairs.push([a, b]); used.add(a); used.add(b);
+  }
+  // fallback for broken Word links: pair the remaining _ftnN references with _ftnrefN notes by their visible number
+  const lab = t => t.replace(/[\[\]()\s]/g, '');
+  for (const a of anchors) {
+    if (used.has(a) || !/^_(ftn|edn)\d+$/.test(frag(a) || '')) continue;
+    const b = anchors.find(x => !used.has(x) && x !== a && /^_(ftn|edn)ref\d+$/.test(frag(x) || '') && lab(x.textContent) === lab(a.textContent) && blockOf(x) && opens(x, blockOf(x)));
+    if (b) { pairs.push([a, b]); used.add(a); used.add(b); }
+  }
+  const clean = t => t.replace(/[\[\]()\s]/g, '').slice(0, 8);
+  const items = [];
+  pairs.sort((p, q) => order.get(p[0]) - order.get(q[0])).forEach(([a, b], k) => {
+    const key = `${prefix}-${k + 1}`;
+    const label = clean(a.textContent) || clean(b.textContent) || String(k + 1);
+    const blk = blockOf(b); const c = blk.cloneNode(true);
+    c.querySelectorAll('a').forEach(x => { if (frag(x) === frag(b) || (!x.textContent.trim() && !x.children.length && x.id)) x.remove(); });
+    c.querySelectorAll('sup').forEach(x => { if (!x.textContent.trim()) x.remove(); });
+    items.push([key, label, c.innerHTML.trim().replace(/^[\s.\-–—:)\]]+/, '')]);
+    blk.dataset.fnmove = '1';
+    let w = a;
+    while (w.parentElement && /^(SUP|B|STRONG|I|EM|SPAN)$/.test(w.parentElement.tagName) && w.parentElement.textContent.replace(/\s/g, '') === a.textContent.replace(/\s/g, '')) w = w.parentElement;
+    const pr = w.previousElementSibling; if (pr && pr.tagName === 'A' && !pr.textContent.trim() && !pr.children.length) pr.remove();
+    const sup = document.createElement('sup'); sup.className = 'fnref';
+    sup.innerHTML = `<a href="#fn-${key}" id="fnref-${key}">${esc(label)}</a>`;
+    w.replaceWith(sup);
+  });
+  // notes whose reference is missing, and references whose note is missing (broken source pages)
+  for (const x of anchors) {
+    if (used.has(x) || !x.isConnected) continue;
+    const f = frag(x) || '';
+    if (/^_(ftn|edn)ref\d+$|backlink$|^rfn\d+$/.test(f)) {
+      const blk = blockOf(x);
+      if (blk && !blk.dataset.fnmove && opens(x, blk)) {
+        const c = blk.cloneNode(true); c.querySelectorAll('a').forEach(y => { if (frag(y) === f || (!y.textContent.trim() && !y.children.length && y.id)) y.remove(); });
+        const h = c.innerHTML.trim().replace(/^[\s.\-–—:)\]]+/, '');
+        if (h.replace(/<[^>]+>/g, '').trim().length > 2) items.push(['', clean(x.textContent), h]);
+        blk.dataset.fnmove = '1';
+      }
+    } else if (/^_(ftn|edn)\d+$|^footnote-\d+$|^fn\d+$/.test(f)) {
+      let w = x; while (w.parentElement && /^(SUP|B|STRONG|I|EM|SPAN)$/.test(w.parentElement.tagName) && w.parentElement.textContent.replace(/\s/g, '') === x.textContent.replace(/\s/g, '')) w = w.parentElement;
+      const sup = document.createElement('sup'); sup.className = 'fnref'; sup.textContent = clean(x.textContent); w.replaceWith(sup);
+    }
+  }
+  body.querySelectorAll('[data-fnmove]').forEach(x => x.remove());
+  body.querySelectorAll('a[id]').forEach(x => { if (!x.textContent.trim() && !x.children.length && /^(_ftn|footnote|fn|rfn|note)/i.test(x.id)) x.remove(); });
+  body.querySelectorAll('div,p').forEach(x => { if (!x.textContent.trim() && !x.querySelector('img,br,hr,sup')) x.remove(); });
+  while (body.lastElementChild && body.lastElementChild.tagName === 'HR') body.lastElementChild.remove();
+  if (!items.length) return pairs.length > 0;
+  const sec = document.createElement('section'); sec.className = 'notes';
+  sec.innerHTML = '<h5>Notas</h5><ol class="fnlist">' + items.map(([k, l, h]) => k ? `<li id="fn-${k}"><span class="fnnum">${esc(l)}</span> <span class="fnbody">${h}</span> <a class="fnback" href="#fnref-${k}" aria-label="Volver al texto">↩</a></li>` : `<li><span class="fnnum">${esc(l)}</span> <span class="fnbody">${h}</span></li>`).join('') + '</ol>';
+  body.append(sec);
+  return true;
+}
+// re-apply the unified notes format to writings stored by older versions of the app
+async function migrateNotes() {
+  if ((S.meta.notesV || 0) >= 1) return false;
+  const posts = await DB.all('posts'); const changed = [];
+  for (const p of posts) {
+    if (p.h.includes('class="notes"') || !/href="[^"]*#/.test(p.h)) continue;
+    const d = new DOMParser().parseFromString(`<body>${p.h}</body>`, 'text/html');
+    if (unifyNotes(d.body)) { p.h = d.body.innerHTML; p.x = toText(p.h); changed.push(p); }
+  }
+  if (changed.length) await DB.putPosts(changed);
+  S.meta.notesV = 1; await DB.set('meta', S.meta);
+  return changed.length > 0;
 }
 const toText = html => { const d = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html'); d.body.querySelectorAll('p,br,h1,h2,h3,h4,h5,h6,li,blockquote,div,tr').forEach(e => e.append(' ')); return d.body.textContent.replace(/[\s ]+/g, ' ').trim(); };
 
@@ -925,7 +1019,7 @@ function notePop(html, actionHtml) {
 function noteHtml(el) {
   let blk = el.closest('p,li,dd,div,aside') || el;
   if (!blk.textContent.trim() || blk.matches('div') && blk.textContent.length > 3000) { let n = el.nextElementSibling || blk.nextElementSibling; while (n && !n.textContent.trim()) n = n.nextElementSibling; if (n) blk = n; }
-  const c = blk.cloneNode(true); c.querySelectorAll('a[href^="#"]').forEach(x => x.replaceWith(...x.childNodes));
+  const c = blk.cloneNode(true); c.querySelectorAll('.fnback').forEach(x => x.remove()); c.querySelectorAll('a[href^="#"]').forEach(x => x.replaceWith(...x.childNodes));
   return c.innerHTML;
 }
 async function openNote(id, link) {
@@ -1028,7 +1122,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
 (async function init() {
   applyPrefs();
   view().innerHTML = '<div class="loading">Cargando…</div>';
-  try { await DB.open(); await loadState(); }
+  try { await DB.open(); await loadState(); if (S.ready) await migrateNotes(); }
   catch (e) { view().innerHTML = `<div class="wrap"><div class="empty"><h3>El almacenamiento no está disponible</h3><p>${esc(e.message)}. Si está en navegación privada, ábrala en una ventana normal.</p></div></div>`; return; }
   await route();
   if (S.ready && !Object.keys(S.books).length) S.meta.lastCheck = null; // existing installs: offer the new library right away
