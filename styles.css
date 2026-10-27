@@ -283,3 +283,18 @@ footer.site{max-width:var(--maxw);margin:0 auto;padding:30px 16px 50px;color:var
 :root[data-theme="dark"] .backres{color:#1a1012}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]):not([data-theme="sepia"]) .backres{color:#1a1012}}
 @media (max-width:640px){.backbar{top:62px}}
+
+/* ---------- unified footnotes ---------- */
+.prose sup.fnref{font-size:.62em;line-height:0;vertical-align:super;margin-left:.05em}
+.prose sup.fnref a{font:600 1em var(--sans);color:var(--accent);text-decoration:none;padding:0 .12em;border-radius:3px}
+.prose sup.fnref a:hover{background:var(--chip)}
+.prose section.notes{margin-top:2.6em;padding-top:1.1em;border-top:1px solid var(--line);font-size:.8em;line-height:1.55;color:color-mix(in srgb,var(--ink) 82%,var(--muted))}
+.prose section.notes h5{font:600 11px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 .9em}
+.prose .fnlist{list-style:none;margin:0;padding:0}
+.prose .fnlist li{position:relative;padding-left:3em;margin:0 0 .65em;text-align:left;border-radius:4px}
+.prose .fnlist .fnnum{position:absolute;left:0;width:2.4em;text-align:right;font:600 .85em/1.9 var(--sans);color:var(--accent)}
+.prose .fnlist .fnback{text-decoration:none;font-family:var(--sans);font-size:.95em;margin-left:.2em}
+.prose[dir="rtl"] .fnlist li{padding-left:0;padding-right:3em;text-align:right}
+.prose[dir="rtl"] .fnlist .fnnum{left:auto;right:0;text-align:left}
+.notepop .fnnum{font:600 .8em var(--sans);color:var(--accent);margin-right:.4em}
+.prose sup.fnref:not(:has(a)){font:600 .62em var(--sans);color:var(--muted)}
