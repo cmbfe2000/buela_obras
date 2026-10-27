@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-25T07:14:25.836054+00:00",
+ "generated": "2026-10-27T07:53:52.614592+00:00",
  "langs": {
   "es": "Español",
   "en": "English",
@@ -15,11 +15,11 @@
    "lang": "es",
    "work": "nuestra-misa",
    "order": 0,
-   "v": "52c472c9ed",
+   "v": "390e78017f",
    "chapters": 50,
    "words": 142136,
    "pages": null,
-   "size": 1100217
+   "size": 1177687
   },
   {
    "id": "sacerdotes-para-siempre",
@@ -27,11 +27,11 @@
    "lang": "es",
    "work": "sacerdotes",
    "order": 1,
-   "v": "db30c261d8",
+   "v": "8a87923b41",
    "chapters": 101,
    "words": 225553,
    "pages": null,
-   "size": 1720238
+   "size": 1786619
   },
   {
    "id": "pan-de-vida-eterna",
@@ -39,11 +39,11 @@
    "lang": "es",
    "work": "pan-vida",
    "order": 2,
-   "v": "cf01a3002f",
-   "chapters": 23,
+   "v": "ea810f0adb",
+   "chapters": 20,
    "words": 68687,
    "pages": null,
-   "size": 885573
+   "size": 916643
   },
   {
    "id": "bread-of-eternal-life",
@@ -51,11 +51,11 @@
    "lang": "en",
    "work": "pan-vida",
    "order": 3,
-   "v": "f0c6522cec",
+   "v": "1144b18109",
    "chapters": 16,
    "words": 69404,
    "pages": 233,
-   "size": 483763
+   "size": 564649
   },
   {
    "id": "pane-di-vita-eterna",
@@ -63,11 +63,11 @@
    "lang": "it",
    "work": "pan-vida",
    "order": 4,
-   "v": "a6e753164f",
+   "v": "427db63a8f",
    "chapters": 18,
    "words": 65781,
    "pages": 238,
-   "size": 444995
+   "size": 465053
   },
   {
    "id": "el-arte-del-padre",
@@ -75,11 +75,11 @@
    "lang": "es",
    "work": "arte-padre",
    "order": 5,
-   "v": "dbd6f09d92",
-   "chapters": 42,
+   "v": "7b311a7880",
+   "chapters": 38,
    "words": 207449,
    "pages": null,
-   "size": 1554806
+   "size": 1640190
   },
   {
    "id": "ars-participandi",
@@ -87,11 +87,11 @@
    "lang": "es",
    "work": "ars-participandi",
    "order": 6,
-   "v": "5efccf51ee",
-   "chapters": 41,
+   "v": "c0c9ba00df",
+   "chapters": 37,
    "words": 240203,
    "pages": null,
-   "size": 1953074
+   "size": 1997242
   },
   {
    "id": "mi-parroquia",
@@ -99,11 +99,11 @@
    "lang": "es",
    "work": "mi-parroquia",
    "order": 7,
-   "v": "28b078505a",
-   "chapters": 34,
+   "v": "0a399b9395",
+   "chapters": 31,
    "words": 193937,
    "pages": null,
-   "size": 1477800
+   "size": 1534794
   },
   {
    "id": "jovenes-tercer-milenio",
@@ -111,11 +111,11 @@
    "lang": "es",
    "work": "jovenes",
    "order": 8,
-   "v": "032c01c3cd",
+   "v": "89f48ac885",
    "chapters": 49,
    "words": 108864,
    "pages": null,
-   "size": 731929
+   "size": 756638
   },
   {
    "id": "youth-third-millennium",
@@ -123,11 +123,11 @@
    "lang": "en",
    "work": "jovenes",
    "order": 9,
-   "v": "f8989b9f91",
-   "chapters": 68,
+   "v": "6d49c25eab",
+   "chapters": 67,
    "words": 107038,
    "pages": null,
-   "size": 757446
+   "size": 821780
   },
   {
    "id": "giovani-terzo-millennio",
@@ -135,11 +135,11 @@
    "lang": "it",
    "work": "jovenes",
    "order": 10,
-   "v": "c8bc1e669c",
+   "v": "9a3a6f4873",
    "chapters": 32,
    "words": 107901,
    "pages": 466,
-   "size": 730836
+   "size": 779260
   },
   {
    "id": "molod-tretiomu-tysiacholitti",
@@ -147,11 +147,11 @@
    "lang": "uk",
    "work": "jovenes",
    "order": 11,
-   "v": "ec485e5855",
+   "v": "033b6fe719",
    "chapters": 18,
    "words": 89157,
    "pages": 384,
-   "size": 1205469
+   "size": 1267918
   },
   {
    "id": "catecismo-jovenes",
@@ -159,11 +159,11 @@
    "lang": "es",
    "work": "catecismo",
    "order": 12,
-   "v": "139432c48e",
+   "v": "8a854b0e78",
    "chapters": 21,
    "words": 82658,
    "pages": null,
-   "size": 620378
+   "size": 653987
   },
   {
    "id": "catechism-for-youth",
@@ -171,11 +171,11 @@
    "lang": "en",
    "work": "catecismo",
    "order": 13,
-   "v": "48ce8d0c70",
-   "chapters": 44,
+   "v": "024d61183c",
+   "chapters": 43,
    "words": 84787,
    "pages": null,
-   "size": 598489
+   "size": 656795
   },
   {
    "id": "catechisme-pour-les-jeunes",
@@ -183,11 +183,11 @@
    "lang": "fr",
    "work": "catecismo",
    "order": 14,
-   "v": "577682e942",
+   "v": "b2bcd9a334",
    "chapters": 20,
    "words": 83087,
    "pages": 151,
-   "size": 509337
+   "size": 509372
   },
   {
    "id": "catechismus-voor-jongeren",
@@ -195,11 +195,11 @@
    "lang": "nl",
    "work": "catecismo",
    "order": 15,
-   "v": "c488852ef5",
+   "v": "ede060da53",
    "chapters": 23,
    "words": 90391,
    "pages": 375,
-   "size": 600260
+   "size": 700509
   },
   {
    "id": "ataques-familia",
@@ -207,11 +207,11 @@
    "lang": "es",
    "work": "familia",
    "order": 16,
-   "v": "9fc0c4655a",
+   "v": "0c2bb33e58",
    "chapters": 3,
    "words": 18250,
    "pages": null,
-   "size": 131943
+   "size": 138961
   },
   {
    "id": "modern-attacks-family",
@@ -219,11 +219,11 @@
    "lang": "en",
    "work": "familia",
    "order": 17,
-   "v": "771f1e8485",
+   "v": "c82151875c",
    "chapters": 4,
    "words": 32799,
    "pages": 139,
-   "size": 214215
+   "size": 244286
   },
   {
    "id": "fatima",
@@ -231,11 +231,11 @@
    "lang": "es",
    "work": "fatima",
    "order": 18,
-   "v": "f2d52bb26f",
-   "chapters": 28,
+   "v": "e3dfccad55",
+   "chapters": 27,
    "words": 114344,
    "pages": null,
-   "size": 774008
+   "size": 802828
   },
   {
    "id": "maria-de-lujan",
@@ -243,11 +243,11 @@
    "lang": "es",
    "work": "lujan",
    "order": 19,
-   "v": "9d0b3232e8",
+   "v": "a97387db30",
    "chapters": 15,
    "words": 52068,
    "pages": null,
-   "size": 442811
+   "size": 452819
   },
   {
    "id": "juan-pablo-magno",
@@ -255,11 +255,11 @@
    "lang": "es",
    "work": "juan-pablo",
    "order": 20,
-   "v": "462cef1a24",
+   "v": "b93e70bd97",
    "chapters": 45,
    "words": 189793,
    "pages": null,
-   "size": 1459478
+   "size": 1517452
   },
   {
    "id": "padre-julio-meinvielle",
@@ -267,11 +267,11 @@
    "lang": "es",
    "work": "meinvielle",
    "order": 21,
-   "v": "81b6ff2482",
+   "v": "3efbdf7c8c",
    "chapters": 14,
    "words": 35418,
    "pages": null,
-   "size": 241682
+   "size": 249607
   },
   {
    "id": "el-senor-es-mi-pastor",
@@ -279,11 +279,11 @@
    "lang": "es",
    "work": "senor-pastor",
    "order": 22,
-   "v": "7976155599",
-   "chapters": 54,
+   "v": "98395e149c",
+   "chapters": 52,
    "words": 272720,
    "pages": null,
-   "size": 1969002
+   "size": 2035250
   },
   {
    "id": "ejercicios-nueva-evangelizacion",
@@ -291,11 +291,11 @@
    "lang": "es",
    "work": "ee-nueva-ev",
    "order": 23,
-   "v": "945ae440f5",
+   "v": "3beb253738",
    "chapters": 24,
    "words": 87846,
    "pages": null,
-   "size": 620196
+   "size": 630616
   },
   {
    "id": "guia-predicadores-ee",
@@ -303,11 +303,11 @@
    "lang": "es",
    "work": "guia-ee",
    "order": 24,
-   "v": "e95d3cb228",
+   "v": "12c04a0887",
    "chapters": 13,
    "words": 14304,
    "pages": null,
-   "size": 97461
+   "size": 100088
   },
   {
    "id": "retorica-eclesiastica",
@@ -315,11 +315,11 @@
    "lang": "es",
    "work": "retorica",
    "order": 25,
-   "v": "32676eb778",
+   "v": "e6a2b90292",
    "chapters": 16,
    "words": 77925,
    "pages": 148,
-   "size": 529809
+   "size": 577490
   },
   {
    "id": "libro-de-la-pasion",
@@ -327,11 +327,11 @@
    "lang": "es",
    "work": "pasion",
    "order": 26,
-   "v": "f6ef94813a",
+   "v": "90e91204a9",
    "chapters": 5,
    "words": 17991,
    "pages": 87,
-   "size": 115958
+   "size": 114713
   },
   {
    "id": "lugar-bautismo-jesus",
@@ -339,11 +339,11 @@
    "lang": "es",
    "work": "bautismo",
    "order": 27,
-   "v": "37b7a57d38",
+   "v": "267e2fa601",
    "chapters": 6,
    "words": 13752,
    "pages": 51,
-   "size": 89853
+   "size": 88551
   },
   {
    "id": "tumba-san-pedro",
@@ -351,11 +351,11 @@
    "lang": "es",
    "work": "san-pedro",
    "order": 28,
-   "v": "c9d73af659",
+   "v": "d2b4e50589",
    "chapters": 6,
    "words": 14354,
    "pages": 60,
-   "size": 94679
+   "size": 94266
   },
   {
    "id": "dominus-iesus",
@@ -363,11 +363,11 @@
    "lang": "es",
    "work": "dominus-iesus",
    "order": 29,
-   "v": "515f337022",
+   "v": "bd095c3670",
    "chapters": 10,
    "words": 35304,
    "pages": null,
-   "size": 312122
+   "size": 327772
   },
   {
    "id": "mirando-gaudi",
@@ -375,11 +375,11 @@
    "lang": "es",
    "work": "gaudi",
    "order": 30,
-   "v": "578849997a",
+   "v": "aa079ab644",
    "chapters": 7,
    "words": 16211,
    "pages": 37,
-   "size": 105729
+   "size": 113733
   },
   {
    "id": "novena-virgen-chapi",
@@ -399,11 +399,11 @@
    "lang": "es",
    "work": "foucauld",
    "order": 32,
-   "v": "74c4634b61",
+   "v": "894260c5b0",
    "chapters": 6,
    "words": 20643,
    "pages": null,
-   "size": 139666
+   "size": 138697
   },
   {
    "id": "las-servidoras-1",
@@ -411,11 +411,11 @@
    "lang": "es",
    "work": "servidoras",
    "order": 33,
-   "v": "812d6d604a",
+   "v": "fc1842cdd0",
    "chapters": 17,
    "words": 93829,
    "pages": null,
-   "size": 687928
+   "size": 725910
   },
   {
    "id": "las-servidoras-2",
@@ -423,11 +423,11 @@
    "lang": "es",
    "work": "servidoras",
    "order": 34,
-   "v": "e8acb8dbd0",
+   "v": "cff07fe8dd",
    "chapters": 59,
    "words": 148702,
    "pages": null,
-   "size": 1336833
+   "size": 1380661
   },
   {
    "id": "las-servidoras-3",
@@ -435,11 +435,11 @@
    "lang": "es",
    "work": "servidoras",
    "order": 35,
-   "v": "c86d7265e6",
+   "v": "16c83672f3",
    "chapters": 16,
    "words": 86394,
    "pages": null,
-   "size": 611009
+   "size": 633280
   },
   {
    "id": "las-servidoras-4",
@@ -447,11 +447,11 @@
    "lang": "es",
    "work": "servidoras",
    "order": 36,
-   "v": "626260fac2",
+   "v": "8df3305f38",
    "chapters": 14,
    "words": 82972,
    "pages": null,
-   "size": 611039
+   "size": 637023
   },
   {
    "id": "las-servidoras-5",
@@ -459,11 +459,11 @@
    "lang": "es",
    "work": "servidoras",
    "order": 37,
-   "v": "c3af7931c1",
-   "chapters": 17,
+   "v": "389a7852f0",
+   "chapters": 16,
    "words": 100285,
    "pages": null,
-   "size": 850453
+   "size": 877442
   },
   {
    "id": "sluzhebnytsi",
@@ -471,11 +471,11 @@
    "lang": "uk",
    "work": "servidoras",
    "order": 38,
-   "v": "54c90622e6",
+   "v": "f0171ea23b",
    "chapters": 12,
    "words": 45170,
    "pages": 220,
-   "size": 549973
+   "size": 603651
   },
   {
    "id": "revista-ave-maria",
@@ -484,11 +484,11 @@
    "work": "revista",
    "order": 39,
    "kind": "revista",
-   "v": "e3df1bb585",
+   "v": "ad15a3cc02",
    "chapters": 92,
    "words": 220427,
    "pages": null,
-   "size": 1535819
+   "size": 1608677
   },
   {
    "id": "revista-dialogo",
@@ -497,11 +497,11 @@
    "work": "revista",
    "order": 40,
    "kind": "revista",
-   "v": "e2c19f8de9",
-   "chapters": 71,
+   "v": "350bea6301",
+   "chapters": 66,
    "words": 366591,
    "pages": null,
-   "size": 3453203
+   "size": 3586497
   },
   {
    "id": "revista-annuntiavit",
@@ -510,11 +510,11 @@
    "work": "revista",
    "order": 41,
    "kind": "revista",
-   "v": "a285168e65",
+   "v": "5f1f32a9ec",
    "chapters": 77,
    "words": 140201,
    "pages": null,
-   "size": 998337
+   "size": 1028011
   },
   {
    "id": "revista-vox-verbi",
@@ -523,11 +523,11 @@
    "work": "revista",
    "order": 42,
    "kind": "revista",
-   "v": "bf8c03f5a5",
-   "chapters": 276,
+   "v": "4ecef6603a",
+   "chapters": 274,
    "words": 516409,
    "pages": null,
-   "size": 3542420
+   "size": 3643415
   }
  ]
 }
